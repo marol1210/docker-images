@@ -1,6 +1,6 @@
 services:
   php81_cli:
-    image: laravel8/crm_admin
+    image: marol/crm_admin
     build:
       context: ./
       dockerfile: ./laravel.Dockerfile
@@ -12,6 +12,8 @@ services:
     stdin_open: true
     networks:
       - laravel_sail
+    volumes:
+      - ./packages:/var/www/html/package
 networks:
   laravel_sail:
     external: true
