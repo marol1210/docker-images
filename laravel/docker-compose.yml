@@ -1,0 +1,17 @@
+services:
+  php81_cli:
+    image: laravel8/crm_admin
+    build:
+      context: ./
+      dockerfile: ./laravel.Dockerfile
+    expose:
+      - 8000
+    ports:
+      - "80:8000"
+    tty: true
+    stdin_open: true
+    networks:
+      - laravel_sail
+networks:
+  laravel_sail:
+    external: true
