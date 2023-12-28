@@ -11,7 +11,13 @@ class AdminServiceProvider extends ServiceProvider{
      */
     public function register()
     {
-        //
+        $this->mergeConfigFrom(
+            __DIR__.'/../configs/crm.php', 'crm'
+        );
+
+        $this->publishes([
+            __DIR__.'/../database/seeders' => database_path('seeders'),
+        ], 'marol_admin');
     }
 
     /**
@@ -21,11 +27,7 @@ class AdminServiceProvider extends ServiceProvider{
      */
     public function boot()
     {
-        //
-        $this->mergeConfigFrom(
-            __DIR__.'/../config/cors.php', 'cors'
-        );
-
-        var_dump(config('cors'));
+        $this->loadRoutesFrom(__DIR__.'/../routes/crm.php');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
     }
 }

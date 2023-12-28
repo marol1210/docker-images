@@ -10,10 +10,17 @@ services:
       - "80:8000"
     tty: true
     stdin_open: true
-    networks:
-      - laravel_sail
     volumes:
       - ./packages:/var/www/html/package
-networks:
-  laravel_sail:
-    external: true
+  mariadb_1011:
+    image: mariadb:10.11.6-jammy
+    expose:
+      - 3306
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: root123
+    volumes:
+      - mariadb:/var/lib/mysql
+volumes:
+  mariadb:

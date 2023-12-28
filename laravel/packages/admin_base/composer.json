@@ -4,7 +4,8 @@
     "type": "library",
     "autoload": {
         "psr-4": {
-            "Marol\\": "src/"
+            "Marol\\": "src/",
+            "Marol\\Database\\":"databse/seeder"
         }
     },
     "authors": [

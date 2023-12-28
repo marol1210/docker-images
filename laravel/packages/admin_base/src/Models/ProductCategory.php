@@ -1,0 +1,32 @@
+<?php
+
+namespace Marol\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductCategory extends Model
+{
+    use HasFactory;
+    
+    /**
+     * The storage format of the model's date columns.
+     *
+     * @var string
+     */
+    protected $dateFormat = 'yyyy-mm-dd H:i:s';
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s'
+    ];
+
+    public function children(){
+        return $this->hasMany(self::class, 'pid');
+    }
+}
