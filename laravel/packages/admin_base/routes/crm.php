@@ -1,7 +1,11 @@
 <?php
 
 \Route::prefix(config('crm.prefix','admin'))->group(function($route){
-    Route::get('/product',function(){
-        return 'ok';
-    });
+    Route::apiResource('product',Marol\Http\Controllers\Product\IndexController::class);
+});
+
+
+\Route::prefix('api')->group(function($route){
+    Route::apiResource('product',Marol\Http\Controllers\Product\IndexController::class);
+    Route::apiResource('pc',Marol\Http\Controllers\Product\CategoryController::class);
 });

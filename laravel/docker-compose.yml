@@ -2,8 +2,8 @@ services:
   php81_cli:
     image: marol/crm_admin
     build:
-      context: ./
-      dockerfile: ./laravel.Dockerfile
+      context: ./packages
+      dockerfile: ../laravel.Dockerfile
     expose:
       - 8000
     ports:
@@ -11,13 +11,13 @@ services:
     tty: true
     stdin_open: true
     volumes:
-      - ./packages:/var/www/html/package
+      - ./:/var/www/html/package
   mariadb_1011:
     image: mariadb:10.11.6-jammy
     expose:
-      - 3306
+      - 3307
     ports:
-      - "3306:3306"
+      - "3307:3307"
     environment:
       MARIADB_ROOT_PASSWORD: root123
     volumes:
