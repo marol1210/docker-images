@@ -15,15 +15,20 @@ class CrmSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('users')->insert([
-            'name' => 'after school',
-            'email' => 'mzh1986love@sina.com',
-            'password' => Hash::make('password123'),
-        ]);
+        DB::table('users')->upsert(
+            [
+                'name' => 'after school',
+                'email' => 'mzh1986love@sina.com',
+                'password' => Hash::make('password123'),
+            ],
+            ['email'],
+        );
     }
 
 
     public function productDump(){
+        \Marol\Models\ProductCategory::truncate();
+
         $category = \Marol\Models\ProductCategory::create(["name"=>"全部","pid"=>0]);
 
         $category_a = \Marol\Models\ProductCategory::create(["name"=>"消费电子","pid"=>$category->id]);
