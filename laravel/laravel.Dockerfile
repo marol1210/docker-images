@@ -4,7 +4,7 @@ ENV APK_REPOSITORY_URL=mirrors.cernet.edu.cn
 ENV APK_REPOSITORY_ORIGIN=dl-cdn.alpinelinux.org
 ENV PROJECT_DIR ${PROJECT_DIR:-/var/www/html/laravel}
 
-WORKDIR /var/www/html
+
 
 # Composer latest release
 COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
@@ -19,8 +19,8 @@ USER laravel:www-data
 
 
 RUN composer config -g repositories.packagist composer https://packagist.pages.dev \
-    && composer create-project laravel/laravel:^10.0 laravel \
-    && composer -d ${PROJECT_DIR} require --prefer-stable laravel/fortify laravel/octane laravel/sanctum -W
-
+    && composer create-project laravel/laravel:^10.0 laravel 
+    
+WORKDIR /var/www/html
 COPY ./start.sh /
 CMD [ "/start.sh" ]

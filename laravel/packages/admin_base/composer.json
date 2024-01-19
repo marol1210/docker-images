@@ -1,11 +1,12 @@
 {
-    "name": "marol/admin_base",
-    "description": "admin base package",
+    "name": "marol/admin-base",
+    "description": "admin basic package",
     "type": "library",
+    "version":"1.0.0",
     "autoload": {
         "psr-4": {
             "Marol\\": "src/",
-            "Marol\\Database\\":"databse/seeder"
+            "Marol\\Database\\":"database/seeders"
         }
     },
     "authors": [
@@ -16,16 +17,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Laravel\\Fortify\\FortifyServiceProvider",
                 "Marol\\AdminServiceProvider"
             ]
         }
-    },
-    "minimum-stability": "dev",
-    "require": {
-        "laravel/framework": "^10.0",
-        "laravel/fortify": "@stable",
-        "laravel/sanctum": "@stable",
-        "laravel/octane": "@stable"
     }
 }

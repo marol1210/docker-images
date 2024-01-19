@@ -1,5 +1,5 @@
 <?php
-namespace Database\Seeders;
+namespace Marol\Database;
  
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +23,8 @@ class CrmSeeder extends Seeder
             ],
             ['email'],
         );
+
+        $this->productDump();
     }
 
 
