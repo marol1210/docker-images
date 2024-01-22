@@ -2,11 +2,11 @@
     "name": "marol/admin-base",
     "description": "admin basic package",
     "type": "library",
-    "version":"1.0.0",
+    "version": "1.0.0",
     "autoload": {
         "psr-4": {
             "Marol\\": "src/",
-            "Marol\\Database\\":"database/seeders"
+            "Marol\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "authors": [
@@ -20,5 +20,33 @@
                 "Marol\\AdminServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.20",
+        "nunomaduro/collision": "^7.8"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare"
+        ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@build",
+            "@php vendor/bin/testbench serve"
+        ],
+        "test": [
+            "@php vendor/bin/phpunit"
+        ]
     }
 }

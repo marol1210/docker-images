@@ -9,7 +9,6 @@ class CategoryController extends BaseController{
      */
     public function index()
     {
-
         $data = \Marol\Models\ProductCategory::with(['children.children'])->where('pid',0)->get();
         return compact('data');
     }
