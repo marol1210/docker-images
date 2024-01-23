@@ -1,9 +1,9 @@
 <?php
 namespace Marol\Http\Controllers\Product;
 
-use Marol\Http\Controllers\Controller as BaseController;
+use Marol\Http\Controllers\AdminController;
 
-class CategoryController extends BaseController{
+class CategoryController extends AdminController{
     /**
      * Display a listing of the resource.
      */

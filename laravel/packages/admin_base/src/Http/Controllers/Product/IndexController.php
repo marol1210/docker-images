@@ -1,9 +1,12 @@
 <?php
 namespace Marol\Http\Controllers\Product;
 
-use Marol\Http\Controllers\Controller as BaseController;
+use Marol\Http\Controllers\AdminController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 
-class IndexController extends BaseController{
+class IndexController extends AdminController{
+
     /**
      * Display a listing of the resource.
      */
@@ -15,7 +18,7 @@ class IndexController extends BaseController{
                 'columns'=>[ 
                     ["prop"=>"name","label"=>"名称"],
                     ["prop"=>"created_at","label"=>"创建时间"],
-                    ["prop"=>"updated_at","label"=>"最后更新时间"],
+                    ["prop"=>"updated_at","label"=>"更新时间"],
                 ]
             ]
         ];
@@ -25,9 +28,15 @@ class IndexController extends BaseController{
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(\Marol\Http\Requests\StoreProductRequest $request)
     {
-        //
+        $validated = $request->validated();
+        $product = new \Marol\Models\Product;
+        foreach($validated as $key=>$val){
+            $product->$key=$val;
+        }
+        $product->save();
+        return Response::return($msg='ok',$code='200');
     }
 
     /**
@@ -41,9 +50,15 @@ class IndexController extends BaseController{
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(\Marol\Http\Requests\StoreProductRequest $request, string $id)
     {
-        //
+        $validated = $request->validated();
+        $product = \Marol\Models\Product::find($id);
+        foreach($validated as $key=>$val){
+            $product->$key=$val;
+        }
+        $product->save();
+        return Response::return($msg='ok',$code='200');
     }
 
     /**

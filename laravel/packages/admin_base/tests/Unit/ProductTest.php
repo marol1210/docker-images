@@ -3,10 +3,34 @@ use Orchestra\Testbench\Concerns\WithWorkbench;
 use PHPUnit\Framework\Attributes\Test;
 use Orchestra\Testbench\Attributes\DefineEnvironment;
 use Marol\Models\ImagePolymorphic;
+use PHPUnit\Framework\Attributes\Depends;
 
 class ProductTest extends \Orchestra\Testbench\TestCase
 {
     use WithWorkbench;
+
+    /**
+     * Automatically enables package discoveries.
+     *
+     * @var bool
+     */
+    protected $enablesPackageDiscoveries = true;
+
+    /**
+     * Define environment setup.
+     *
+     * @param  \Illuminate\Foundation\Application  $app
+     * @return void
+     */
+    protected function defineEnvironment($app)
+    {
+        // Setup default database to use sqlite :memory:
+        tap($app['config'], function ($config) {
+            config([
+                'fortify.views' => false
+            ]);
+        });
+    }
 
     /**
      * mysql | mariadb  connection config
@@ -28,9 +52,32 @@ class ProductTest extends \Orchestra\Testbench\TestCase
 
     #[Test]
     #[DefineEnvironment('usesMySqlConnection')]
-    public function list_product_by_category(){
-        $category = \Marol\Models\ProductCategory::with('products')->find(3);
-        $this->assertNotNull($category);
+    public function login(){
+        $email = 'mzh1986love@sina.com';
+        $password = 'password123';
+
+        $response = $this->withHeaders(['X-Requested-With'=>'XMLHttpRequest','Accept'=>'application/json'])
+                         ->post('/login',['email'=>$email,'password'=>$password]);
+        $response->assertSuccessful();
+
+        return \Auth::user();
+    }
+
+    #[Test]
+    #[Depends('login')]
+    #[DefineEnvironment('usesMySqlConnection')]
+    public function list_product_by_category($user){
+        // $response = $this->get('/sanctum/csrf-cookie');
+        // $headerName = 'XSRF-TOKEN';
+        // var_dump($response->getCookie($headerName,false)->getValue());
+        // $response->assertCookie($headerName);
+        // return;
+        $response = $this->withHeaders(['X-Requested-With'=>'XMLHttpRequest','Accept'=>'application/json'])
+                         ->post('admin/product',[
+                            'name'=>'xccc',
+                            'describe'=>'333333'
+                        ]);
+        $response->assertStatus(200);
     }
 
     // #[Test]
