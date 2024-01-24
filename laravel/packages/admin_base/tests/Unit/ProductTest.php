@@ -27,7 +27,8 @@ class ProductTest extends \Orchestra\Testbench\TestCase
         // Setup default database to use sqlite :memory:
         tap($app['config'], function ($config) {
             config([
-                'fortify.views' => false
+                'fortify.views' => false,
+                'auth.providers.users.model' => \Marol\Models\AdminUser::class
             ]);
         });
     }
@@ -56,66 +57,79 @@ class ProductTest extends \Orchestra\Testbench\TestCase
         $email = 'mzh1986love@sina.com';
         $password = 'password123';
 
-        $response = $this->withHeaders(['X-Requested-With'=>'XMLHttpRequest','Accept'=>'application/json'])
-                         ->post('/login',['email'=>$email,'password'=>$password]);
+        $response = $this->withHeaders([
+                            'X-Requested-With'=>'XMLHttpRequest',
+                            'Accept'=>'application/json'
+                        ])
+                         ->postJson('/login',['email'=>$email,'password'=>$password]);
         $response->assertSuccessful();
 
-        return \Auth::user();
+        $user = \Auth::user() ?? null;
+        // 'Authorization'=> 'Bearer '.$user->createToken("login_{$user->id}")->plainTextToken
+        $this->assertNotNull($user,'未成功登录.');
+        return $user;
     }
 
     #[Test]
     #[Depends('login')]
     #[DefineEnvironment('usesMySqlConnection')]
-    public function list_product_by_category($user){
+    public function create_product($user){
         // $response = $this->get('/sanctum/csrf-cookie');
         // $headerName = 'XSRF-TOKEN';
         // var_dump($response->getCookie($headerName,false)->getValue());
         // $response->assertCookie($headerName);
         // return;
-        $response = $this->withHeaders(['X-Requested-With'=>'XMLHttpRequest','Accept'=>'application/json'])
+        $response = $this->withHeaders([
+                                'X-Requested-With'=>'XMLHttpRequest',
+                                'Accept'=>'application/json',
+                                'Authorization'=> 'Bearer 3|PW6WHcXd6ISP7PwsQhFgpYRzaP5QPsQIi3RHw7sU309d07e9'
+                            ])
                          ->post('admin/product',[
-                            'name'=>'xccc',
-                            'describe'=>'333333'
+                            'name'=>'华为云-1',
+                            'describe'=>'华为云-1',
+                            'category_id' => 100,
+                            'price'=>'200.00',
+                            'price_scope'=>'discount',
                         ]);
-        $response->assertStatus(200);
+        $response->assertValid();
     }
 
-    // #[Test]
-    // #[DefineEnvironment('usesMySqlConnection')]
-    public function create_product(){
-        \DB::transaction(function () {
-            $product = \Marol\Models\Product::first();
-            $this->assertNotNull($product);
-    
-            $this->create_cover_image($product);
-            $this->create_detail_image($product);
-            $product->refresh();
-            //封面图只能1张
-            $this->assertEquals(1,$product->image()->where('use_as','cover')->count());
-            //详情图可以多张
-            $this->assertGreaterThan(1,$product->image()->where('use_as','<>','cover')->count());
-        });
+    #[Test]
+    #[Depends('login')]
+    #[DefineEnvironment('usesMySqlConnection')]
+    public function delete_product(){
+        $response = $this->withHeaders([
+                            'X-Requested-With'=>'XMLHttpRequest',
+                            'Accept'=>'application/json',
+                            'Authorization'=> 'Bearer 3|PW6WHcXd6ISP7PwsQhFgpYRzaP5QPsQIi3RHw7sU309d07e9'
+                        ])
+                    ->delete('admin/product/6');
+        $response->assertStatus(200);    
     }
 
-    /**
-     * 
-     * 创建封面图
-     */
-    protected function create_cover_image(\Marol\Models\Product $product){
-        $url = asset('https://res.vmallres.com/pimages//uomcdn/CN/pms/202401/gbom/6942103109485/group//428_428_B9BD1A39B563C7ABD4617C22AA673AEE.png');
-        return $product->image()->updateOrCreate(['is_active'=>'1','use_as'=>'cover','imageable_id'=>$product->id,'imageable_type'=>$product::class],["url" => $url]);
+    #[Test]
+    #[Depends('login')]
+    #[DefineEnvironment('usesMySqlConnection')]
+    public function show_product(){
+        $response = $this->withHeaders([
+                            'X-Requested-With'=>'XMLHttpRequest',
+                            'Authorization'=> 'Bearer 3|PW6WHcXd6ISP7PwsQhFgpYRzaP5QPsQIi3RHw7sU309d07e9'
+                        ])
+                    ->getJson('admin/product/1');
+                    
+        $response->assertStatus(200)->assertJson(['code'=>200]);
     }
 
-    /**
-     * 
-     * 创建详情图
-     */
-    protected function create_detail_image(\Marol\Models\Product $product){
-        $url = asset('https://res.vmallres.com/pimages//uomcdn/CN/pms/202401/gbom/6942103109485/group//428_428_B9BD1A39B563C7ABD4617C22AA673AEE.png');
-        $product->image()->createMany([
-            ["url" => $url,"use_as" => "detail","is_active"=>"1"],
-            ["url" => $url,"use_as" => "detail","is_active"=>"1"],
-            ["url" => $url,"use_as" => "detail","is_active"=>"1"],
-        ]);
+    #[Test]
+    #[Depends('login')]
+    #[DefineEnvironment('usesMySqlConnection')]
+    public function list_product(){
+        $response = $this->withHeaders([
+                            'X-Requested-With'=>'XMLHttpRequest',
+                            'Authorization'=> 'Bearer 3|PW6WHcXd6ISP7PwsQhFgpYRzaP5QPsQIi3RHw7sU309d07e9'
+                        ])
+                    ->getJson('admin/product');
+
+        $response->assertStatus(200)->assertJson(['code'=>200]);
     }
 }

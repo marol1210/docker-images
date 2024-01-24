@@ -2,6 +2,7 @@
 namespace Marol\Http\Controllers\Product;
 
 use Marol\Http\Controllers\AdminController;
+use Illuminate\Support\Facades\Response;
 
 class CategoryController extends AdminController{
     /**
@@ -10,7 +11,7 @@ class CategoryController extends AdminController{
     public function index()
     {
         $data = \Marol\Models\ProductCategory::with(['children.children'])->where('pid',0)->get();
-        return compact('data');
+        return Response::return(code: 200, msg: 'ok', data: $data);
     }
 
     /**
@@ -26,7 +27,7 @@ class CategoryController extends AdminController{
      */
     public function show(string $id)
     {
-        //
+        return Response::return(code: 200, msg: 'ok', data: \Marol\Models\ProductCategory::find($id));
     }
 
     /**
@@ -43,6 +44,6 @@ class CategoryController extends AdminController{
     public function destroy(string $id)
     {
         \Marol\Models\ProductCategory::destroy($id);
-        return ['errcode'=>0, 'msg'=>'ok'];
+        return Response::return(code: 200, msg: 'ok');
     }
 }

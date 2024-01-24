@@ -1,5 +1,5 @@
 <?php
-namespace Marol\Http\Controllers\Product;
+namespace Marol\Http\Controllers\Members;
 
 use Marol\Http\Controllers\AdminController;
 use Illuminate\Http\Request;
@@ -28,15 +28,11 @@ class IndexController extends AdminController{
      */
     public function store(\Marol\Http\Requests\StoreProductRequest $request)
     {
-        $validated = $request->safe()->only(['name','describe']);
+        $validated = $request->validated();
         $product = new \Marol\Models\Product;
         foreach($validated as $key=>$val){
             $product->$key=$val;
         }
-
-        $request->whenFilled('price', function (string $input) use($product) {
-        });
-
         $product->creater_id = $request->user()->id;
         $product->save();
         return Response::return(msg: 'ok', code: '200');

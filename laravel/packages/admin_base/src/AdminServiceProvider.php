@@ -31,8 +31,8 @@ class AdminServiceProvider extends ServiceProvider{
         $this->loadRoutesFrom(__DIR__.'/../routes/crm.php');
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
-        Response::macro('return', function (string $code='0' , string $msg='') {
-            return Response::json(compact('code','msg'));
+        Response::macro('return', function ($code='0' , $msg='' , $data=[]) {
+            return Response::json(compact('code','msg','data'));
         });
     }
 }

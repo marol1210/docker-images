@@ -31,6 +31,9 @@ class StoreProductRequest extends FormRequest
         return [
             'name' => 'required|max:32',
             'describe' => 'required|max:128',
+            'category_id' => 'required|integer',
+            'price' => 'nullable|decimal:2',
+            'price_scope' => 'required_with:price|in:normal,discount,vip'
         ];
     }
 }

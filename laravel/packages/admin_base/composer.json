@@ -23,7 +23,9 @@
     },
     "require-dev": {
         "orchestra/testbench": "^8.20",
-        "nunomaduro/collision": "^7.8"
+        "nunomaduro/collision": "^7.8",
+        "laravel/sanctum": "^3.3",
+        "laravel/fortify": "^1.20"
     },
     "autoload-dev": {
         "psr-4": {

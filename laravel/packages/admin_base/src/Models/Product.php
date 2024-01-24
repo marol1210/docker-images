@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Marol\Models\Scopes\OrderByTimeScope;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
@@ -33,17 +34,30 @@ class Product extends Model
         static::addGlobalScope(new OrderByTimeScope);
     }
 
-
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function image(): MorphOne{
         return $this->morphOne(ImagePolymorphic::class, 'imageable');
     }
 
-
     /**
-     * Get the comments for the blog post.
+     * Get the category for the product.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function category(): BelongsToMany
     {
         return $this->belongsToMany(ProductCategory::class,'relation_products','product_id','product_category_id');
     }                                                       
+
+    /**
+     * Get all of the price for the Product
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function price(): HasMany
+    {
+        return $this->hasMany(ProductPrice::class, 'product_id', 'id');
+    }
 }
