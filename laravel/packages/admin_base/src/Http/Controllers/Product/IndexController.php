@@ -65,7 +65,7 @@ class IndexController extends AdminController{
      */
     public function show(string $id)
     {
-        $product = \Marol\Models\Product::with(['category','price'])->find($id);
+        $product = \Marol\Models\Product::with(['category','price','cover_img','detail_img'])->find($id);
         return Response::return(msg: 'ok', code: '200', data: $product);
     }
 

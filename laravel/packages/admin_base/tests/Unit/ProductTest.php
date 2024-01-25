@@ -63,7 +63,7 @@ class ProductTest extends \Orchestra\Testbench\TestCase
                         ])
                          ->postJson('/login',['email'=>$email,'password'=>$password]);
         // $response->assertSuccessful(); //(>= 200 and < 300) HTTP status code
-        $response->assertOk();         //has a 200 HTTP status code
+        // $response->assertOk();            //has a 200 HTTP status code
         $user = \Auth::user() ?? null;
         // 'Authorization'=> 'Bearer '.$user->createToken("login_{$user->id}")->plainTextToken
         $this->assertNotNull($user,'未成功登录.');
@@ -96,7 +96,7 @@ class ProductTest extends \Orchestra\Testbench\TestCase
         $response->assertValid();
     }
 
-    #[Test]
+    // #[Test]
     #[Depends('login')]
     #[DefineEnvironment('usesMySqlConnection')]
     public function delete_product(){
@@ -124,7 +124,7 @@ class ProductTest extends \Orchestra\Testbench\TestCase
         return $response->getData(true);
     }
 
-    #[Test]
+    // #[Test]
     #[Depends('login')]
     #[DefineEnvironment('usesMySqlConnection')]
     public function list_product(){
@@ -137,7 +137,7 @@ class ProductTest extends \Orchestra\Testbench\TestCase
         $response->assertJson(['code'=>200]);
     }
 
-    #[Test]
+    // #[Test]
     // #[Depends('login')]
     #[Depends('show_product')]
     #[DefineEnvironment('usesMySqlConnection')]

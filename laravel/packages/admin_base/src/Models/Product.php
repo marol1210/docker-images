@@ -9,6 +9,7 @@ use Marol\Models\Scopes\OrderByTimeScope;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Product extends Model
 {
@@ -35,10 +36,24 @@ class Product extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-    public function image(): MorphOne{
-        return $this->morphOne(ImagePolymorphic::class, 'imageable');
+    public function image(): MorphMany {
+        return $this->morphMany(ImagePolymorphic::class, 'imageable');
+    }
+
+    /**
+     * 封面图
+     */
+    public function cover_img(): morphOne {
+        return $this->image()->where('use_as','cover')->one();
+    }
+
+    /**
+     * 详情图
+     */
+    public function detail_img(): MorphMany {
+        return $this->image()->where('use_as','detail');
     }
 
     /**
