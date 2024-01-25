@@ -16,7 +16,10 @@ return new class extends Migration
             $table->integer('product_id')->nullable(false);
             $table->decimal('price',8,2)->nullable(false);
             $table->enum('scope',['normal','discount','vip'])->default('normal');
+            $table->string('describe',256)->nullable();
             $table->timestamps();
+
+            $table->unique(['scope','product_id','price']);
         });
     }
 
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('relation_prices');
+        Schema::dropIfExists('product_prices');
     }
 };

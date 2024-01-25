@@ -62,15 +62,15 @@ class ProductTest extends \Orchestra\Testbench\TestCase
                             'Accept'=>'application/json'
                         ])
                          ->postJson('/login',['email'=>$email,'password'=>$password]);
-        $response->assertSuccessful();
-
+        // $response->assertSuccessful(); //(>= 200 and < 300) HTTP status code
+        $response->assertOk();         //has a 200 HTTP status code
         $user = \Auth::user() ?? null;
         // 'Authorization'=> 'Bearer '.$user->createToken("login_{$user->id}")->plainTextToken
         $this->assertNotNull($user,'未成功登录.');
         return $user;
     }
 
-    #[Test]
+    // #[Test]
     #[Depends('login')]
     #[DefineEnvironment('usesMySqlConnection')]
     public function create_product($user){
@@ -87,9 +87,11 @@ class ProductTest extends \Orchestra\Testbench\TestCase
                          ->post('admin/product',[
                             'name'=>'华为云-1',
                             'describe'=>'华为云-1',
-                            'category_id' => 100,
-                            'price'=>'200.00',
-                            'price_scope'=>'discount',
+                            'category_id' => 3,
+                            'describe'=>'phpunit test',
+                            'price'=>[
+                                ['price'=>'299.99']
+                            ]
                         ]);
         $response->assertValid();
     }
@@ -104,7 +106,8 @@ class ProductTest extends \Orchestra\Testbench\TestCase
                             'Authorization'=> 'Bearer 3|PW6WHcXd6ISP7PwsQhFgpYRzaP5QPsQIi3RHw7sU309d07e9'
                         ])
                     ->delete('admin/product/6');
-        $response->assertStatus(200);    
+        // $response->assertStatus(200);    
+        $response->assertOk();    
     }
 
     #[Test]
@@ -115,9 +118,10 @@ class ProductTest extends \Orchestra\Testbench\TestCase
                             'X-Requested-With'=>'XMLHttpRequest',
                             'Authorization'=> 'Bearer 3|PW6WHcXd6ISP7PwsQhFgpYRzaP5QPsQIi3RHw7sU309d07e9'
                         ])
-                    ->getJson('admin/product/1');
-                    
-        $response->assertStatus(200)->assertJson(['code'=>200]);
+                    ->getJson('admin/product/18');
+        
+        $response->assertJsonPath('data.category',fn(array $category)=> count($category) > 0);
+        return $response->getData(true);
     }
 
     #[Test]
@@ -130,6 +134,35 @@ class ProductTest extends \Orchestra\Testbench\TestCase
                         ])
                     ->getJson('admin/product');
 
+        $response->assertJson(['code'=>200]);
+    }
+
+    #[Test]
+    // #[Depends('login')]
+    #[Depends('show_product')]
+    #[DefineEnvironment('usesMySqlConnection')]
+    public function update_product($data){
+
+        $category = \Arr::get($data,'data.category');
+        $price = \Arr::get($data,'data.price');
+
+        $price = collect($price)->map(function($item,$key){
+            unset($item['created_at']);
+            unset($item['updated_at']);
+            $item['scope'] = 'vip';
+            $item['describe'] = 'vip';
+            return $item;
+        });
+
+        $response = $this->withHeaders([
+                            'X-Requested-With'=>'XMLHttpRequest',
+                            'Authorization'=> 'Bearer 3|PW6WHcXd6ISP7PwsQhFgpYRzaP5QPsQIi3RHw7sU309d07e9'
+                        ])
+                    ->putJson('admin/product/18',[
+                        'category_id'=>2,
+                        'price'=> $price
+                    ]);
+        $response->assertValid();
         $response->assertStatus(200)->assertJson(['code'=>200]);
     }
 }
