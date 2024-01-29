@@ -16,6 +16,7 @@ class IndexController extends AdminController{
             'list'=>\Marol\Models\Product::with(['category','price'])->get(),
             'columns'=>[ 
                 ["prop"=>"name","label"=>"名称"],
+                ["prop"=>"category","label"=>"类型"],
                 ["prop"=>"describe","label"=>"描述"],
                 ["prop"=>"created_at","label"=>"创建时间"],
                 ["prop"=>"updated_at","label"=>"更新时间"],
@@ -48,13 +49,12 @@ class IndexController extends AdminController{
                 if(empty($item['scope'])){
                     $item['scope'] = 'normal';
                 }
+                $item['created_at'] = date('Y-m-d H:i:s');
                 $item['product_id'] = $product->id;
                 return $item;
             });
-            $product->price()->upsert(
-                $input->toArray(),
-                [],
-                []
+            $product->price()->insert(
+                $input->toArray()
             );
         });
         return Response::return(msg: 'ok', code: '200');

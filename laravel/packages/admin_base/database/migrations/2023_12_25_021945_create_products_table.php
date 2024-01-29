@@ -17,6 +17,7 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string('name',32)->nullable(false)->comment("商品名称");
             $table->string('describe',256)->nullable(false)->comment("商品描述");
+            $table->boolean('is_active')->nullable(false)->comment("1：激活  0：禁用");
             $table->unsignedMediumInteger('creater_id')->nullable(false)->comment("创建人ID");
             $table->timestamps();
             $table->comment= '商品';
