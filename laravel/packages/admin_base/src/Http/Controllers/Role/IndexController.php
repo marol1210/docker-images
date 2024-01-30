@@ -1,21 +1,32 @@
 <?php
-namespace Marol\Http\Controllers\Member;
+namespace Marol\Http\Controllers\Role;
 
 use Marol\Http\Controllers\AdminController;
-use Illuminate\Http\Request;
+use Marol\Http\Requests\RoleRequest;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Http\Request;
 
 class IndexController extends AdminController{
 
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $pageSize = $request->query('pageSize', 10);
+        $items   = \Marol\Models\Role::withTrashed()->paginate($pageSize);
         $data = [
-            'list'=>\Marol\Models\Product::with(['category'])->get(),
+            'list'=> $items->items(),
+            'paginator'=> [
+                'total'=> $items->count(),
+                'pageSize'=> $pageSize,
+                'currentPage'=> $request->page,
+            ],
             'columns'=>[ 
-                ["prop"=>"name","label"=>"名称"],
+                ["prop"=>"title","label"=>"角色名"],
+                ["prop"=>"name","label"=>"标识名"],
+                ["prop"=>"is_active","label"=>"是否禁用"],
+                ["prop"=>"deleted_at","label"=>"是否删除"],
                 ["prop"=>"created_at","label"=>"创建时间"],
                 ["prop"=>"updated_at","label"=>"更新时间"],
             ]
@@ -26,15 +37,14 @@ class IndexController extends AdminController{
     /**
      * Store a newly created resource in storage.
      */
-    public function store(\Marol\Http\Requests\StoreProductRequest $request)
+    public function store(RoleRequest $request)
     {
         $validated = $request->validated();
-        $product = new \Marol\Models\Product;
+        $role = new \Marol\Models\Role;
         foreach($validated as $key=>$val){
-            $product->$key=$val;
+            $role->$key=$val;
         }
-        $product->creater_id = $request->user()->id;
-        $product->save();
+        $role->save();
         return Response::return(msg: 'ok', code: '200');
     }
 
@@ -43,21 +53,21 @@ class IndexController extends AdminController{
      */
     public function show(string $id)
     {
-        $product = \Marol\Models\Product::find($id);
-        return Response::return(msg: 'ok', code: '200', data: $product);
+        $role = \Marol\Models\Role::find($id);
+        return Response::return(msg: 'ok', code: '200', data: $role);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(\Marol\Http\Requests\StoreProductRequest $request, string $id)
+    public function update(string $id)
     {
         $validated = $request->validated();
-        $product = \Marol\Models\Product::find($id);
+        $role = \Marol\Models\Role::find($id);
         foreach($validated as $key=>$val){
-            $product->$key=$val;
+            $role->$key=$val;
         }
-        $product->save();
+        $role->save();
         return Response::return(msg: 'ok', code: '200');
     }
 
@@ -66,7 +76,7 @@ class IndexController extends AdminController{
      */
     public function destroy(string $id)
     {
-        \Marol\Models\Product::destroy($id);
+        \Marol\Models\Role::destroy($id);
         return Response::return(msg: 'ok', code: '200');
     }
 }

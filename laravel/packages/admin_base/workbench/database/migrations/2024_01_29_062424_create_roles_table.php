@@ -16,8 +16,10 @@ return new class extends Migration
             $table->string('title',32)->nullable(false)->comment('标题名称');
             $table->string('name',32)->nullable(false)->comment('标识名称');
             $table->string('remark',512)->nullable()->comment('备注');
-            $table->boolean('is_active')->nullable(false)->defaut(1);
+            $table->boolean('is_active')->nullable(false)->default(1);
             $table->timestamps();
+
+            $table->softDeletes();
         });
     }
 

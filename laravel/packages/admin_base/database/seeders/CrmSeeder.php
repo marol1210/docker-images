@@ -24,8 +24,16 @@ class CrmSeeder extends Seeder
             ['email'],
         );
         $this->productDump();
+        $this->createRoles();
     }
 
+    public function createRoles(){
+        \Marol\Models\Role::truncate();
+
+        $created_at = date('Y-m-d H:i:s');
+        \Marol\Models\Role::create(["name"=>"admin","title"=>"超级管理员","remark"=>"系统超级管理员","created_at"=>$created_at]);
+        \Marol\Models\Role::create(["name"=>"marketing","title"=>"运营","remark"=>"系统超级管理员","created_at"=>$created_at]);
+    }
 
     public function productDump(){
         \Marol\Models\ProductCategory::truncate();

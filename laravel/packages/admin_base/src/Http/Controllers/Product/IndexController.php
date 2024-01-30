@@ -10,11 +10,18 @@ class IndexController extends AdminController{
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $pageSize = $request->query('pageSize', 10);
+        $items   = \Marol\Models\Product::with(['category','price'])->withTrashed()->paginate($pageSize);
         $data = [
-            'list'=>\Marol\Models\Product::with(['category','price'])->get(),
-            'columns'=>[ 
+            'list'=> $items->items(),
+            'paginator'=> [
+                'total'=> $items->count(),
+                'pageSize'=> $pageSize,
+                'currentPage'=> $request->page,
+            ],
+            'columns'=> [ 
                 ["prop"=>"name","label"=>"名称"],
                 ["prop"=>"category","label"=>"类型"],
                 ["prop"=>"describe","label"=>"描述"],
