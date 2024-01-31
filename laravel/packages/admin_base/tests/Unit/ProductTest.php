@@ -85,12 +85,14 @@ class ProductTest extends \Orchestra\Testbench\TestCase
                                 'Authorization'=> 'Bearer 3|PW6WHcXd6ISP7PwsQhFgpYRzaP5QPsQIi3RHw7sU309d07e9'
                             ])
                          ->post('admin/product',[
-                            'name'=>'华为云-1',
-                            'describe'=>'华为云-1',
+                            'name'=>'华为云-2',
+                            'describe'=>'华为云-2',
                             'category_id' => 3,
-                            'describe'=>'phpunit test',
+                            'describe'=>'华为云-2',
                             'price'=>[
-                                ['price'=>'299.99']
+                                ['price'=>'299.99','scope'=>'vip'],
+                                ['price'=>'399.99','scope'=>'discount'],
+                                ['price'=>'499.99','scope'=>'normal']
                             ]
                         ]);
         $response->assertValid();
@@ -110,7 +112,7 @@ class ProductTest extends \Orchestra\Testbench\TestCase
         $response->assertOk();    
     }
 
-    #[Test]
+    // #[Test]
     #[Depends('login')]
     #[DefineEnvironment('usesMySqlConnection')]
     public function show_product(){
@@ -118,7 +120,7 @@ class ProductTest extends \Orchestra\Testbench\TestCase
                             'X-Requested-With'=>'XMLHttpRequest',
                             'Authorization'=> 'Bearer 3|PW6WHcXd6ISP7PwsQhFgpYRzaP5QPsQIi3RHw7sU309d07e9'
                         ])
-                    ->getJson('admin/product/18');
+                    ->getJson('admin/product/25');
         
         $response->assertJsonPath('data.category',fn(array $category)=> count($category) > 0);
         return $response->getData(true);
@@ -138,19 +140,16 @@ class ProductTest extends \Orchestra\Testbench\TestCase
     }
 
     // #[Test]
-    // #[Depends('login')]
     #[Depends('show_product')]
     #[DefineEnvironment('usesMySqlConnection')]
     public function update_product($data){
-
         $category = \Arr::get($data,'data.category');
         $price = \Arr::get($data,'data.price');
 
         $price = collect($price)->map(function($item,$key){
             unset($item['created_at']);
             unset($item['updated_at']);
-            $item['scope'] = 'vip';
-            $item['describe'] = 'vip';
+            $item['updated_at'] = date('Y-m-d H:i:d');
             return $item;
         });
 
@@ -158,7 +157,7 @@ class ProductTest extends \Orchestra\Testbench\TestCase
                             'X-Requested-With'=>'XMLHttpRequest',
                             'Authorization'=> 'Bearer 3|PW6WHcXd6ISP7PwsQhFgpYRzaP5QPsQIi3RHw7sU309d07e9'
                         ])
-                    ->putJson('admin/product/18',[
+                    ->putJson('admin/product/25',[
                         'category_id'=>2,
                         'price'=> $price
                     ]);

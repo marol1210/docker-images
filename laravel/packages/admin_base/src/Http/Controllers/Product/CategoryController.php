@@ -3,6 +3,8 @@ namespace Marol\Http\Controllers\Product;
 
 use Marol\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Response;
+use Marol\Http\Requests\CategoryRequest;
+use Marol\Models\ProductCategory;
 
 class CategoryController extends AdminController{
     /**
@@ -17,9 +19,16 @@ class CategoryController extends AdminController{
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $pc = new ProductCategory;
+        $pc->pid  = $validated['pid'];
+        $pc->name = $validated['name'];
+        $pc->save();
+
+        return Response::return(code: 200, msg: 'ok', data:$pc);
     }
 
     /**

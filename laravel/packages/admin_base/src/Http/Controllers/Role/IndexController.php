@@ -23,8 +23,8 @@ class IndexController extends AdminController{
                 'currentPage'=> $request->page,
             ],
             'columns'=>[ 
-                ["prop"=>"title","label"=>"角色名"],
-                ["prop"=>"name","label"=>"标识名"],
+                ["prop"=>"title","label"=>"角色"],
+                ["prop"=>"name","label"=>"标识"],
                 ["prop"=>"is_active","label"=>"是否禁用"],
                 ["prop"=>"deleted_at","label"=>"是否删除"],
                 ["prop"=>"created_at","label"=>"创建时间"],
