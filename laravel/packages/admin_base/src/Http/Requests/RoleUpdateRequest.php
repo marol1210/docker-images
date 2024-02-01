@@ -4,7 +4,7 @@ namespace Marol\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RoleRequest extends FormRequest
+class RoleUpdateRequest extends FormRequest
 {
     /**
      * Indicates if the validator should stop on the first rule failure.
@@ -29,8 +29,8 @@ class RoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|max:32',
-            'title' => 'required|max:32',
+            'name' => 'nullable|max:32',
+            'title' => 'nullable|max:32',
             'remark' => 'nullable|max:512',
             'is_active' => 'nullable|integer'
         ];

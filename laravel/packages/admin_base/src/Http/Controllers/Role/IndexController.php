@@ -3,6 +3,7 @@ namespace Marol\Http\Controllers\Role;
 
 use Marol\Http\Controllers\AdminController;
 use Marol\Http\Requests\RoleRequest;
+use Marol\Http\Requests\RoleUpdateRequest;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 
@@ -26,7 +27,8 @@ class IndexController extends AdminController{
                 ["prop"=>"title","label"=>"角色"],
                 ["prop"=>"name","label"=>"标识"],
                 ["prop"=>"is_active","label"=>"是否禁用"],
-                ["prop"=>"deleted_at","label"=>"是否删除"],
+                // ["prop"=>"deleted_at","label"=>"是否删除"],
+                ["prop"=>"remark","label"=>"备注"],
                 ["prop"=>"created_at","label"=>"创建时间"],
                 ["prop"=>"updated_at","label"=>"更新时间"],
             ]
@@ -60,7 +62,7 @@ class IndexController extends AdminController{
     /**
      * Update the specified resource in storage.
      */
-    public function update(string $id)
+    public function update(RoleUpdateRequest $request,string $id)
     {
         $validated = $request->validated();
         $role = \Marol\Models\Role::find($id);
