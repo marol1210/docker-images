@@ -1,32 +1,21 @@
 <?php
-namespace Marol\Http\Controllers\Role;
+namespace Marol\Http\Controllers;
 
 use Marol\Http\Controllers\AdminController;
 use Marol\Http\Requests\RoleRequest;
 use Marol\Http\Requests\RoleUpdateRequest;
 use Illuminate\Support\Facades\Response;
-use Marol\Http\Requests\Role\SearchRequest;
+use Illuminate\Http\Request;
 
-class IndexController extends AdminController{
+class UserController extends AdminController{
 
     /**
      * Display a listing of the resource.
      */
-    public function index(SearchRequest $request)
+    public function index(Request $request)
     {
         $pageSize = $request->query('pageSize', 10);
-        $where = $request->validated();
-        $query = \Marol\Models\Role::withTrashed();
-
-        $request->whenFilled('title', function (string $title) use($query){
-            $query = $query->where('title','like',$title.'%');
-        });
-
-        $request->whenFilled('is_active', function (string $is_active) use($query){
-            $query = $query->where('is_active',$is_active);
-        });
-
-        $items = $query->paginate($pageSize);
+        $items   = \Marol\Models\AdminUser::withTrashed()->paginate($pageSize);
         $data = [
             'list'=> $items->items(),
             'paginator'=> [

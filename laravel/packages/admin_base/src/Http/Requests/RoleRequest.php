@@ -32,7 +32,7 @@ class RoleRequest extends FormRequest
             'name' => 'required|max:32',
             'title' => 'required|max:32',
             'remark' => 'nullable|max:512',
-            'is_active' => 'nullable|integer'
+            'is_active' => 'nullable|boolean'
         ];
     }
 }
