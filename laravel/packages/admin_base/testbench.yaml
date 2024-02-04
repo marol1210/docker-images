@@ -8,6 +8,14 @@ migrations:
 seeders:
   - Workbench\Database\Seeders\DatabaseSeeder
 
+env:
+  - DB_CONNECTION=mysql
+  - DB_HOST=laravel-mariadb11-1
+  - DB_PORT=3306
+  - DB_DATABASE=laravel
+  - DB_USERNAME=root
+  - DB_PASSWORD=123456
+
 workbench:
   start: '/'
   install: true

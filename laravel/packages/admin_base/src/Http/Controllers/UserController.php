@@ -2,33 +2,44 @@
 namespace Marol\Http\Controllers;
 
 use Marol\Http\Controllers\AdminController;
-use Marol\Http\Requests\RoleRequest;
-use Marol\Http\Requests\RoleUpdateRequest;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Http\Request;
+use Marol\Http\Requests\Account\SearchRequest;
+use Marol\Http\Requests\Account\UpdateRequest;
 
 class UserController extends AdminController{
 
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(SearchRequest $request)
     {
         $pageSize = $request->query('pageSize', 10);
-        $items   = \Marol\Models\AdminUser::withTrashed()->paginate($pageSize);
+        $page     = $request->query('page', 1);
+
+        $where = $request->validated();
+        $query = \Marol\Models\AdminUser::query();
+
+        $request->whenFilled('name', function (string $name) use($query){
+            $query->where('name','like',$name.'%');
+        });
+
+        $request->whenFilled('is_active', function (string $is_active) use($query){
+            $query->where('is_active',$is_active);
+        });
+
+        $items   = $query->paginate($pageSize,page:$page);
         $data = [
             'list'=> $items->items(),
             'paginator'=> [
-                'total'=> $items->count(),
+                'total'=> $items->total(),
                 'pageSize'=> $pageSize,
                 'currentPage'=> $request->page,
             ],
             'columns'=>[ 
-                ["prop"=>"title","label"=>"角色"],
-                ["prop"=>"name","label"=>"标识"],
-                ["prop"=>"is_active","label"=>"是否禁用"],
+                ["prop"=>"email","label"=>"账号"],
+                ["prop"=>"name","label"=>"名称"],
+                ["prop"=>"is_active","label"=>"是否激活"],
                 // ["prop"=>"deleted_at","label"=>"是否删除"],
-                ["prop"=>"remark","label"=>"备注"],
                 ["prop"=>"created_at","label"=>"创建时间"],
                 ["prop"=>"updated_at","label"=>"更新时间"],
             ]
@@ -42,7 +53,7 @@ class UserController extends AdminController{
     public function store(RoleRequest $request)
     {
         $validated = $request->validated();
-        $role = new \Marol\Models\Role;
+        $role = new \Marol\Models\AdminUser;
         foreach($validated as $key=>$val){
             $role->$key=$val;
         }
@@ -55,17 +66,17 @@ class UserController extends AdminController{
      */
     public function show(string $id)
     {
-        $role = \Marol\Models\Role::find($id);
+        $role = \Marol\Models\AdminUser::find($id);
         return Response::return(msg: 'ok', code: '200', data: $role);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(RoleUpdateRequest $request,string $id)
+    public function update(UpdateRequest $request,string $id)
     {
         $validated = $request->validated();
-        $role = \Marol\Models\Role::find($id);
+        $role = \Marol\Models\AdminUser::find($id);
         foreach($validated as $key=>$val){
             $role->$key=$val;
         }
@@ -78,7 +89,7 @@ class UserController extends AdminController{
      */
     public function destroy(string $id)
     {
-        \Marol\Models\Role::destroy($id);
+        \Marol\Models\AdminUser::destroy($id);
         return Response::return(msg: 'ok', code: '200');
     }
 }

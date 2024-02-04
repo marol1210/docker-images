@@ -2,8 +2,8 @@
 namespace Marol\Http\Controllers\Role;
 
 use Marol\Http\Controllers\AdminController;
-use Marol\Http\Requests\RoleRequest;
-use Marol\Http\Requests\RoleUpdateRequest;
+use Marol\Http\Requests\Role\RoleRequest;
+use Marol\Http\Requests\Role\RoleUpdateRequest;
 use Illuminate\Support\Facades\Response;
 use Marol\Http\Requests\Role\SearchRequest;
 
@@ -15,24 +15,25 @@ class IndexController extends AdminController{
     public function index(SearchRequest $request)
     {
         $pageSize = $request->query('pageSize', 10);
+        $page = $request->query('page', 1);
         $where = $request->validated();
-        $query = \Marol\Models\Role::withTrashed();
+        $query = \Marol\Models\Role::query();
 
         $request->whenFilled('title', function (string $title) use($query){
-            $query = $query->where('title','like',$title.'%');
+            $query->where('title','like',$title.'%');
         });
 
         $request->whenFilled('is_active', function (string $is_active) use($query){
-            $query = $query->where('is_active',$is_active);
+            $query->where('is_active',$is_active);
         });
 
         $items = $query->paginate($pageSize);
         $data = [
             'list'=> $items->items(),
             'paginator'=> [
-                'total'=> $items->count(),
+                'total'=> $items->total(),
                 'pageSize'=> $pageSize,
-                'currentPage'=> $request->page,
+                'currentPage'=> $page,
             ],
             'columns'=>[ 
                 ["prop"=>"title","label"=>"角色"],

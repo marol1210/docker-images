@@ -1,6 +1,6 @@
 <?php
 
-namespace Marol\Http\Requests;
+namespace Marol\Http\Requests\Role;
 
 use Illuminate\Foundation\Http\FormRequest;
 
