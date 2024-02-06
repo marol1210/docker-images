@@ -29,9 +29,12 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'nullable',
-            'email' => 'nullable',
-            'is_active' => 'nullable|boolean'
+            'name' => 'nullable|max:255',
+            'email' => 'nullable|max:255',
+            'is_active' => 'nullable|boolean',
+            'password' => 'nullable|max:255',
+            'password_confirm' => 'same:password',
+            'selected_roles' => 'nullable|array',
         ];
     }
 }

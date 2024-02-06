@@ -3,20 +3,20 @@ namespace Marol\Http\Controllers\Role;
 
 use Marol\Http\Controllers\AdminController;
 use Marol\Http\Requests\Role\RoleRequest;
-use Marol\Http\Requests\Role\RoleUpdateRequest;
+use Marol\Http\Requests\Role\UpdateRequest;
 use Illuminate\Support\Facades\Response;
-use Marol\Http\Requests\Role\SearchRequest;
+use Illuminate\Http\Request;
 
 class IndexController extends AdminController{
 
     /**
      * Display a listing of the resource.
      */
-    public function index(SearchRequest $request)
+    public function index(Request $request)
     {
         $pageSize = $request->query('pageSize', 10);
         $page = $request->query('page', 1);
-        $where = $request->validated();
+
         $query = \Marol\Models\Role::query();
 
         $request->whenFilled('title', function (string $title) use($query){
@@ -74,7 +74,7 @@ class IndexController extends AdminController{
     /**
      * Update the specified resource in storage.
      */
-    public function update(RoleUpdateRequest $request,string $id)
+    public function update(UpdateRequest $request,string $id)
     {
         $validated = $request->validated();
         $role = \Marol\Models\Role::find($id);

@@ -98,7 +98,7 @@ class ProductTest extends \Orchestra\Testbench\TestCase
         $response->assertValid();
     }
 
-    // #[Test]
+    #[Test]
     #[Depends('login')]
     #[DefineEnvironment('usesMySqlConnection')]
     public function delete_product(){
@@ -112,7 +112,7 @@ class ProductTest extends \Orchestra\Testbench\TestCase
         $response->assertOk();    
     }
 
-    // #[Test]
+    #[Test]
     #[Depends('login')]
     #[DefineEnvironment('usesMySqlConnection')]
     public function show_product(){
@@ -126,7 +126,7 @@ class ProductTest extends \Orchestra\Testbench\TestCase
         return $response->getData(true);
     }
 
-    // #[Test]
+    #[Test]
     #[Depends('login')]
     #[DefineEnvironment('usesMySqlConnection')]
     public function list_product(){
@@ -139,7 +139,7 @@ class ProductTest extends \Orchestra\Testbench\TestCase
         $response->assertJson(['code'=>200]);
     }
 
-    // #[Test]
+    #[Test]
     #[Depends('show_product')]
     #[DefineEnvironment('usesMySqlConnection')]
     public function update_product($data){

@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class AdminUser extends Authenticatable
 {
@@ -23,6 +24,7 @@ class AdminUser extends Authenticatable
         'name',
         'email',
         'password',
+        'is_active',
     ];
 
     /**
@@ -47,4 +49,12 @@ class AdminUser extends Authenticatable
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'is_active' => 'boolean',
     ];
+
+    /**
+     * The roles that belong to the user.
+     */
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class,'relation_user_roles','user_id','role_id');
+    }
 }

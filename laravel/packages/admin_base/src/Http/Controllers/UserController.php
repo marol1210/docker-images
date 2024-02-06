@@ -3,20 +3,20 @@ namespace Marol\Http\Controllers;
 
 use Marol\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Response;
-use Marol\Http\Requests\Account\SearchRequest;
 use Marol\Http\Requests\Account\UpdateRequest;
+use Marol\Http\Requests\Account\StoreRequest;
+use Illuminate\Http\Request;
 
 class UserController extends AdminController{
 
     /**
      * Display a listing of the resource.
      */
-    public function index(SearchRequest $request)
+    public function index(Request $request)
     {
         $pageSize = $request->query('pageSize', 10);
         $page     = $request->query('page', 1);
 
-        $where = $request->validated();
         $query = \Marol\Models\AdminUser::query();
 
         $request->whenFilled('name', function (string $name) use($query){
@@ -50,15 +50,23 @@ class UserController extends AdminController{
     /**
      * Store a newly created resource in storage.
      */
-    public function store(RoleRequest $request)
+    public function store(StoreRequest $request)
     {
-        $validated = $request->validated();
-        $role = new \Marol\Models\AdminUser;
-        foreach($validated as $key=>$val){
-            $role->$key=$val;
-        }
-        $role->save();
-        return Response::return(msg: 'ok', code: '200');
+        $validated = $request->safe()->only(['name','password','email','is_active']);
+        $roles = $request->post('selected_roles');
+
+        $user = null;
+        \DB::transaction(function () use($validated,$roles,$user){
+            $user = \Marol\Models\AdminUser::create($validated);
+            if(!empty($roles)){
+                $roles = collect($roles)->mapWithKeys(function($e){
+                    return [ $e => ['created_at' => date('Y-m-d H:i:s')] ];
+                })->toArray();
+                $user->roles()->syncWithoutDetaching($roles);
+            }
+        });
+
+        return Response::return(msg: 'ok', code: '200', data: $user);
     }
 
     /**
@@ -75,12 +83,21 @@ class UserController extends AdminController{
      */
     public function update(UpdateRequest $request,string $id)
     {
-        $validated = $request->validated();
-        $role = \Marol\Models\AdminUser::find($id);
-        foreach($validated as $key=>$val){
-            $role->$key=$val;
-        }
-        $role->save();
+        $validated = $request->safe()->only(['name','password','email','is_active']);
+        $roles = $request->post('selected_roles');
+
+        \DB::transaction(function () use($validated,$roles){
+            $user = \Marol\Models\AdminUser::find($id);
+            foreach($validated as $key=>$val){
+                if(empty($val)){
+                    continue;
+                }
+                $user->$key=$val;
+            }
+            if(!empty($roles))
+                $user->roles()->syncWithoutDetaching($roles);
+            $user->save();
+        });
         return Response::return(msg: 'ok', code: '200');
     }
 

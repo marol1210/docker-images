@@ -1,10 +1,10 @@
 <?php
 
-namespace Marol\Http\Requests\Account;
+namespace Marol\Http\Requests\Role;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SearchRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
     /**
      * Indicates if the validator should stop on the first rule failure.
@@ -29,8 +29,9 @@ class SearchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'nullable',
-            'email' => 'nullable',
+            'name' => 'nullable|max:32',
+            'title' => 'nullable|max:32',
+            'remark' => 'nullable|max:512',
             'is_active' => 'nullable|boolean'
         ];
     }

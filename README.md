@@ -1,21 +1,31 @@
 # docker-images
 
 ## 说明
-基于laravel,开发电商CRM. 功能模块以laravel包的的形式管理. 
+
+`基于laravel开发电商CRM系统. 系统功能以laravel包的的形式提供.`
 
 ## 系统运行要求
-    `PHP8.1`
-    `Mysql | MariaDB`
-    `Redis`
-    `Laravel:~10.0`
+
+    Docker
+    PHP8.1
+    MariaDB
+    Redis
+    Laravel:~10.0
 
 ## 运行方式
-使用docker制作运行镜像
 
-## 模块说明
-admin_base:  系统管理; 商品,商品类别; 用户管理;
+    cd laravel
+    docker compose up -d #创建laravel应用容器，监听端口：80
 
-## 特性
-商品多价格管理      （开发中）
-商品发布预览        （开发中）
-用户多机构多角色管理 （开发中）
+## 模块
+
+`admin-base`
+
+##### 功能模块
+- #####  商品管理
+  - 商品类别
+  - 商品列表
+- #####  系统管理
+  - 账号管理
+  - 角色管理
+- #####  系统登录
