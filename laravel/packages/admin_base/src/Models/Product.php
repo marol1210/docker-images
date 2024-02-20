@@ -26,6 +26,20 @@ class Product extends Model
     //     'updated_at' => 'datetime:Y-m-d H:i:s'
     // ];
 
+    /**
+     * The storage format of the model's date columns.
+     *
+     * @var string
+     */
+    // protected $dateFormat = 'Y-m-d';
+
+    /**
+     * Prepare a date for array / JSON serialization.
+     */
+    protected function serializeDate(\DateTimeInterface $date): string
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
 
     /**
      * The "booted" method of the model.

@@ -17,7 +17,7 @@ class UserController extends AdminController{
         $pageSize = $request->query('pageSize', 10);
         $page     = $request->query('page', 1);
 
-        $query = \Marol\Models\AdminUser::query();
+        $query = \Marol\Models\AdminUser::with(['roles']);
 
         $request->whenFilled('name', function (string $name) use($query){
             $query->where('name','like',$name.'%');
@@ -28,8 +28,12 @@ class UserController extends AdminController{
         });
 
         $items   = $query->paginate($pageSize,page:$page);
+        $lst     = collect($items->items())->transform(function($item){
+            $item['_roles'] = $item['roles']->map->only(['title','id']);
+            return $item;
+        });
         $data = [
-            'list'=> $items->items(),
+            'list'=> $lst,
             'paginator'=> [
                 'total'=> $items->total(),
                 'pageSize'=> $pageSize,
@@ -74,7 +78,7 @@ class UserController extends AdminController{
      */
     public function show(string $id)
     {
-        $role = \Marol\Models\AdminUser::find($id);
+        $role = \Marol\Models\AdminUser::with(['roles'])->find($id);
         return Response::return(msg: 'ok', code: '200', data: $role);
     }
 
@@ -86,7 +90,7 @@ class UserController extends AdminController{
         $validated = $request->safe()->only(['name','password','email','is_active']);
         $roles = $request->post('selected_roles');
 
-        \DB::transaction(function () use($validated,$roles){
+        \DB::transaction(function () use($validated,$roles,$id){
             $user = \Marol\Models\AdminUser::find($id);
             foreach($validated as $key=>$val){
                 if(empty($val)){
@@ -95,7 +99,8 @@ class UserController extends AdminController{
                 $user->$key=$val;
             }
             if(!empty($roles))
-                $user->roles()->syncWithoutDetaching($roles);
+                // $user->roles()->syncWithoutDetaching($roles);
+                $user->roles()->syncWithPivotValues($roles, ['updated_at' => now()->toDateTimeString()]);
             $user->save();
         });
         return Response::return(msg: 'ok', code: '200');
